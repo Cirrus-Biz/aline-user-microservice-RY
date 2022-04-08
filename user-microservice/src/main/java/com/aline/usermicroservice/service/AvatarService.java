@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.aline.core.exception.NotFoundException;
 import com.aline.core.dto.request.UserAvatarRequest;
 import com.aline.core.model.user.UserAvatar;
 import com.aline.core.repository.ApplicantRepository;
@@ -49,7 +50,7 @@ public class AvatarService {
 
 	@PermitAll
 	public UserAvatarRequest getAvatar(long id) {
-		UserAvatar imageModel = avatarRepository.findById(id).orElseThrow();
+		UserAvatar imageModel = avatarRepository.findById(id).orElseThrow(() -> new NotFoundException("Avatar image could not be found."));
 		String base64 = "data:image/png;base64," + Base64.getEncoder().encodeToString(imageModel.getPic());
 		UserAvatarRequest image = new UserAvatarRequest(base64);
 		return image;
