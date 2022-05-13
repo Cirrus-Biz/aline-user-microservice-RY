@@ -1,11 +1,12 @@
-node {
-    checkout scm
+pipeline {
+    agent any
 
-    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-
-        def customImage = docker.build("noodleween/aline-user-ry:corretto")
-
-        /* Push the container to the custom Registry */
-        customImage.push()
+    stages {
+        stage('Github connect') {
+            steps {
+                git 'https://github.com/Cirrus-Biz/aline-user-microservice-RY.git'
+                sh 'ls'
+            }
+        }
     }
 }
