@@ -1,12 +1,14 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'maven:3.8.1-adoptopenjdk-11' 
+            args '-v /root/.m2:/root/.m2' 
+        }
+    }
     stages {
-        stage('Mvn Package') {
+        stage('Build') { 
             steps {
-                def mvnHome = tool name: 'maven-3', type: 'maven'
-                def mvnCMD = "${mvnHome}/bin/mvn"
-                sh "${mvnCMD} clean package"
+                sh 'mvn -B -DskipTests clean package' 
             }
         }
     }
