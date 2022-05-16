@@ -19,9 +19,7 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'mvn clean package -DskipTests'
-                script { 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
-                }
+                sh 'docker build -t noodleween/aline-user-ry .'
             }
         }
         stage('Deploy our image') { 
