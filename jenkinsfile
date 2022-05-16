@@ -6,9 +6,9 @@ pipeline {
         }
     }
     stages {
-        stage('Test'){
+        stage('Core Checkout'){
             steps {
-                sh 'ls'
+                git 'https://github.com/Cirrus-Biz/core.git'
             }
         }
         stage('Build') { 
