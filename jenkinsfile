@@ -1,9 +1,4 @@
 pipeline {
-    environment {
-        registry = "noodleween/aline-user-ry"
-        registryCredential = 'noodleween'
-        dockerImage= ''
-    }
     agent {
         docker {
             image 'maven:3.8.1-adoptopenjdk-11' 
@@ -18,24 +13,8 @@ pipeline {
         }
         stage('Build') { 
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean package -DskipTests' 
             }
         }
-        stage('Building our image') { 
-            steps { 
-                script { 
-                    dockerImage = docker.build registry + ":corretto" 
-                }
-            }
-        }
-        stage('Deploy our image') { 
-            steps { 
-                script { 
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
-                    }
-                } 
-            }
-        } 
     }
 }
