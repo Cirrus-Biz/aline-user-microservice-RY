@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage('Github connect') {
+        stage('Mvn Package') {
             steps {
-                git 'https://github.com/Cirrus-Biz/aline-user-microservice-RY.git'
-                sh 'ls'
+                sh 'mvn clean package'
             }
         }
     }
