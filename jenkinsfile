@@ -6,15 +6,14 @@ pipeline {
         }
     }
     stages {
-        stage('Build') { 
+        stage('Package') { 
             steps {
                 sh 'mvn clean package -DskipTests' 
             }
         }
-        stage('test') {
+        stage('Build') {
             steps {
-                sh 'ls'
-                sh 'pwd'
+                sh 'docker build -t noodleween/aline-user-ry:corretto .'
             }
         }
     }
