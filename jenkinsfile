@@ -6,11 +6,6 @@ pipeline {
         }
     }
     stages {
-        stage('Core Checkout'){
-            steps {
-                git 'https://github.com/Cirrus-Biz/core.git'
-            }
-        }
         stage('Build') { 
             steps {
                 sh 'mvn clean package -DskipTests' 
