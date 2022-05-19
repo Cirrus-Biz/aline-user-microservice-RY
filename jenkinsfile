@@ -5,10 +5,6 @@ pipeline {
         dockerImage = ''
     }
     agent any
-    tools {
-        maven
-        docker
-    }
     stages {
         stage('Package') { 
             steps {
