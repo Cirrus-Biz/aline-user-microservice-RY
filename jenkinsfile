@@ -13,7 +13,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'docker build -t noodleween/aline-user-ry:corretto .'
+                app = docker.build("./aline-user-microservice-RY")
             }
         }
     }
