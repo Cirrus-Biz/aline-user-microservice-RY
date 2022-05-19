@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        registry = "541351699142.dkr.ecr.us-east-1.amazonaws.com"
+        registry = "541351699142.dkr.ecr.us-east-1.amazonaws.com/cirrus-aline-user-ry"
         registryCredential = 'my.aws.credentials'
         dockerImage = ''
     }
