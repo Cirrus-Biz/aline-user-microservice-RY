@@ -13,7 +13,23 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh "docker build -t noodleween/aline-user-ry:corretto.$BUILD_NUMBER ."
+                script {
+                    dockerImage = docker.build registry + ":corretto.$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Dockerhub Push') {
+            steps {
+                script {
+                    docker.withRegistry( '', registryCredential) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage ('Clean Up') {
+            steps {
+                sh 'docker rmi $registry:corretto.$BUILD_NUMBER'
             }
         }
     }
