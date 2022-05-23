@@ -14,7 +14,7 @@ pipeline {
         stage('SonarQube analysis') {
             steps {
                 withSonarQubeEnv(installationName: 'sonar') {
-                    sh 'mvn sonar:sonar -Dsonar.
+                    sh 'mvn sonar:sonar -Dsonar .
                     projectKey=aline-user-microservice'
                 }
             }
