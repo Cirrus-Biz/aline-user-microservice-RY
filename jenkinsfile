@@ -11,6 +11,15 @@ pipeline {
                 sh 'mvn clean package -Dmaven.test.failure.ignore=true' 
             }
         }
+        stage('SonarQube analysis') {
+            steps {
+                withSonarQubeEnv(installationName: 'sonar') {
+                    sh 'mvn sonar:sonar -Dsonar.
+                    projectKey=aline-user-microservice'
+                }
+            }
+            
+        }
         stage('Build') {
             steps {
                 script {
