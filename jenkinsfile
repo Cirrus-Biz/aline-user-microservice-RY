@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Package') { 
             steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean install' 
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
             }
         }
         stage('SonarQube analysis') {
@@ -16,8 +16,7 @@ pipeline {
                 withSonarQubeEnv(installationName: 'sonar') {
                     sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
                 }
-            }
-            
+            } 
         }
         stage('Build') {
             steps {
