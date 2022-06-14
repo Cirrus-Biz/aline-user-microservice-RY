@@ -1,7 +1,8 @@
 pipeline {
     environment {
-        registry = "541351699142.dkr.ecr.us-east-1.amazonaws.com/cirrus-aline-user-ry"
-        registryCredential = 'my.aws.credentials'
+        registryEndpoint = 'aline-user-ry'
+        registry = "Cirrus-Business-ECR-URL"
+        registryCredential = 'ry-aws-credential'
         dockerImage = ''
     }
     agent any
@@ -21,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    dockerImage = docker.build registry + ":$GIT_COMMIT"
                 }
             }
         }
@@ -41,3 +42,13 @@ pipeline {
         }
     }
 }
+
+
+
+
+
+
+# add to sonarqube:
+    # quality gates
+    # refactor stages to sonarqube before packages
+// add maven test, maven verify, 
