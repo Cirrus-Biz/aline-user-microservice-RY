@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$GIT_COMMIT"
+                    dockerImage = docker.build registry + ":${GIT_COMMIT}"
                 }
             }
         }
@@ -37,7 +37,7 @@ pipeline {
         }
         stage ('Clean Up') {
             steps {
-                sh 'docker rmi $registry:$BUILD_NUMBER'
+                sh 'docker rmi $registry:${GIT_COMMIT}'
             }
         }
     }
