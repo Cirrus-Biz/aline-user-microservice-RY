@@ -2,7 +2,8 @@ pipeline {
     environment {
         registryEndpoint = 'aline-user-ry'
         registryURL = credentials('AWS-ECR-URL')
-        registryCredential = credentials('ry-aws-credentials')
+        registryCredential = 'ry-aws-credentials'
+        THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
     }
     agent any
