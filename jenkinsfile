@@ -23,14 +23,12 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage = docker.build registryURL + registryEndpoint + ":$GIT_COMMIT"
+                    dockerImage = docker.build registryURL + registryEndpoint + ":$BUILD_NUMBER"
                 }
             }
         }
         stage('Deploy Image') {
             steps {
-                sh 'rm  ~/.dockercfg || true'
-                sh 'rm ~/.docker/config.json || true'
                 script {
                     docker.withRegistry("https://" + registryURL + registryEndpoint + "ecr:us-east-1:" + registryCredential) {
                         dockerImage.push()
