@@ -1,7 +1,7 @@
 pipeline {
     environment {
-        registryEndpoint = 'aline-user-ry'
-        registryURL = "Cirrus-Business-ECR-URL"
+        registryEndpointCredential = 'aline-user-ry'
+        urlCredential = "Cirrus-Business-ECR-URL"
         registryCredential = 'ry-aws-credential'
         dockerImage = ''
     }
@@ -22,14 +22,14 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage = docker.build "${registryURL}" + "${registryEndpoint}" + ":${GIT_COMMIT}"
+                    dockerImage = docker.build registryURL + registryEndpoint + ":${GIT_COMMIT}"
                 }
             }
         }
         stage('Deploy Image') {
             steps {
                 script {
-                    docker.withRegistry("https://" + "${registryURL}" + "${registryEndpoint}" + "ecr:us-east-1:" + registryCredential) {
+                    docker.withRegistry("https://" + registryURL + registryEndpoint + "ecr:us-east-1:" + registryCredential) {
                         dockerImage.push()
                     }
                 }
