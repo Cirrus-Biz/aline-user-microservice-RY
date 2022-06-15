@@ -3,6 +3,7 @@ pipeline {
         registryEndpoint = 'aline-user-ry'
         registryURL = credentials('AWS-ECR-URL')
         registryCredential = 'ry-aws-credentials'
+        THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
     }
     agent any
@@ -21,6 +22,8 @@ pipeline {
         }
         stage('Build') {
             steps {
+                sh 'rm  ~/.dockercfg || true'
+                sh 'rm ~/.docker/config.json || true'
                 script {
                     dockerImage = docker.build registryURL + registryEndpoint + ":$GIT_COMMIT"
                 }
