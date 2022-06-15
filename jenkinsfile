@@ -31,7 +31,6 @@ pipeline {
                 script {
                     docker.withRegistry("https://" + registryURL + registryEndpoint + "ecr:us-east-1:" + registryCredential) {
                         dockerImage.push()
-                        THE_BUTLER_SAYS_SO = credentials('ry-aws-credential')
                     }
                 }
             }
