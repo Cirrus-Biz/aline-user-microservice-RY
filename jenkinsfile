@@ -1,7 +1,7 @@
 pipeline {
     environment {
         registryEndpoint = credentials('aline-user-ry')
-        registryURL = credentials("Cirrus-Business-ECR-URL")
+        registryURL = credentials('Cirrus-Business-ECR-URL')
         registryCredential = 'ry-aws-credential'
         dockerImage = ''
     }
