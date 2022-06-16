@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + registryEndpoint + ":$BUILD_NUMBER"
+                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":$BUILD_NUMBER"
                 }
             }
         }
