@@ -29,7 +29,7 @@ pipeline {
         stage('Deploy Image') {
             steps {
                 script {
-                    docker.withRegistry("https://$", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+                    docker.withRegistry("https://", "ecr:$env.AWS_REGION:ry-aws-credentials") {
                         dockerImage.push()
                     }
                 }
