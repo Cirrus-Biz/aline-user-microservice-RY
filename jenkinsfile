@@ -22,7 +22,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    dockerImage = docker.build registryURL + registryEndpoint + ":$GIT_COMMIT"
+                    dockerImage = docker.build registryURL + registryEndpoint + ":${GIT_COMMIT}"
                 }
             }
         }
