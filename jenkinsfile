@@ -29,7 +29,7 @@ pipeline {
         stage('Deploy Image') {
             steps {
                 script {
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+                    docker.withRegistry("https://$", "ecr:$env.AWS_REGION:ry-aws-credentials") {
                         dockerImage.push()
                     }
                 }
@@ -37,7 +37,7 @@ pipeline {
         }
         stage ('Clean Up') {
             steps {
-                sh 'docker rmi $registry:${GIT_COMMIT}'
+                sh 'docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}'
             }
         }
     }
