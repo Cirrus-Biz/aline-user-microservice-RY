@@ -24,7 +24,9 @@ pipeline {
                 }
             } 
         }
-        stage('SonarQube Qualitygate')
+        stage('SonarQube Qualitygate') {
+            
+        }
         stage('Package') { 
             steps {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
