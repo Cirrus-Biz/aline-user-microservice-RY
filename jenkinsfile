@@ -57,12 +57,3 @@ pipeline {
         }
     }
 }
-
-
-
-
-
-// add to sonarqube:
-    // quality gates
-    // refactor stages to sonarqube before packages
-// add maven test, maven verify, 
