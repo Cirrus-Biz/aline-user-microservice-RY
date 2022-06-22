@@ -29,27 +29,27 @@ pipeline {
         //         waitForQualityGate abortPipeline: true
         //     }
         // }
-        stage('Package') { 
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-            }
-        }
-        stage('Build') {
-            steps {
-                script {
-                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-                }
-            }
-        }
-        stage('Publish Image') {
-            steps {
-                script {
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
+        // stage('Package') { 
+        //     steps {
+        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+        //     }
+        // }
+        // stage('Build') {
+        //     steps {
+        //         script {
+        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+        //         }
+        //     }
+        // }
+        // stage('Publish Image') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+        //                 dockerImage.push()
+        //             }
+        //         }
+        //     }
+        // }
         stage('Docker Hard Clean') {
             steps {
                 sh 'ls'
@@ -59,32 +59,32 @@ pipeline {
                 // sh 'docker context rm ry-ecs'
             }
         }
-        stage('ECS Context Creation') {
-            steps {
-                sh 'docker context create ecs ry-ecs --from-env'
-                sh 'docker context use ry-ecs'
-            }
-        }
-        stage('Docker Compose Up') {
-            steps {
-                sh 'docker compose up'
-            }
-        }
-        stage('Cleaning') {
-            steps {
-                sh 'sudo docker system prune -all -f'
-                sh 'sudo docker logout'
-                sh 'sudo rm -rf ~/.aws/'
-                sh 'sudo rm -rf ~/.sonar/*'
-                sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
-                sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git'
-                sh 'docker context use default'
-            }
-        }
-        stage ('Clean Up') {
-            steps {
-                sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
-            }
-        }
+        // stage('ECS Context Creation') {
+        //     steps {
+        //         sh 'docker context create ecs ry-ecs --from-env'
+        //         sh 'docker context use ry-ecs'
+        //     }
+        // }
+        // stage('Docker Compose Up') {
+        //     steps {
+        //         sh 'docker compose up'
+        //     }
+        // }
+        // stage('Cleaning') {
+        //     steps {
+        //         sh 'sudo docker system prune -all -f'
+        //         sh 'sudo docker logout'
+        //         sh 'sudo rm -rf ~/.aws/'
+        //         sh 'sudo rm -rf ~/.sonar/*'
+        //         sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
+        //         sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git'
+        //         sh 'docker context use default'
+        //     }
+        // }
+        // stage ('Clean Up') {
+        //     steps {
+        //         sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
+        //     }
+        // }
     }
 }
