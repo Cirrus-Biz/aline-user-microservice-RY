@@ -51,17 +51,23 @@ pipeline {
             }
         }
         stage('Docker Hard Clean') {
-            sh 'docker compose down'
-            sh 'docker context use default'
-            sh 'sudo docker system prune -a -volumes -f'
-            sh 'docker context rm ry-ecs'
+            steps {
+                sh 'docker compose down'
+                sh 'docker context use default'
+                sh 'sudo docker system prune -a -volumes -f'
+                sh 'docker context rm ry-ecs'
+            }
         }
         stage('ECS Context Creation') {
-            sh 'docker context create ecs ry-ecs --from-env'
-            sh 'docker context use ry-ecs'
+            steps {
+                sh 'docker context create ecs ry-ecs --from-env'
+                sh 'docker context use ry-ecs'
+            }
         }
         stage('Docker Compose Up') {
-            sh 'docker compose up'
+            step {
+                sh 'docker compose up'
+            }
         }
         stage('Cleaning') {
             steps {
