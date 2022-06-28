@@ -73,6 +73,7 @@ pipeline {
         stage('Docker Compose Up') {
             steps {
                 sh '. ${aline_env_vars}'
+                sh 'echo $USER_M'
                 sh 'docker compose up'
             }
         }
