@@ -58,11 +58,9 @@ pipeline {
         }
         stage('Docker Hard Clean') {
             steps {
-                sh 'ls'
-                // sh 'docker compose down'
-                // sh 'docker context use default'
-                // sh 'sudo docker system prune -a -volumes -f'
-                // sh 'docker context rm ry-ecs'
+                sh 'docker context use default'
+                sh 'sudo docker system prune -a -volumes -f'
+                sh 'docker context rm ry-ecs'
             }
         }
         stage('ECS Context Creation') {
@@ -87,10 +85,10 @@ pipeline {
                 sh 'docker context use default'
             }
         }
-        stage ('Clean Up') {
-            steps {
-                sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
-            }
-        }
+        // stage ('Clean Up') {
+        //     steps {
+        //         sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
+        //     }
+        // }
     }
 }
