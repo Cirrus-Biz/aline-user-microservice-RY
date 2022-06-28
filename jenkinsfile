@@ -4,7 +4,7 @@ pipeline {
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
-        aline-env-vars = credentials('aline-env-vars')
+        aline_env_vars = credentials('aline-env-vars')
     }
     agent any
     stages {
@@ -72,7 +72,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh '. aline-env-vars'
+                sh '. aline_env_vars'
                 sh 'docker compose up'
             }
         }
