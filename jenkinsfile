@@ -58,7 +58,6 @@ pipeline {
         }
         stage('Docker Hard Clean') {
             steps {
-                sh 'docker compose down'
                 sh 'docker context use default'
                 sh 'sudo docker system prune -a --volumes -f'
                 sh 'docker context rm ry-ecs'
