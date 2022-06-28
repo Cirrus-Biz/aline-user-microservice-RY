@@ -72,7 +72,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh '. aline_env_vars'
+                sh '. ${aline_env_vars}'
                 sh 'docker compose up'
             }
         }
