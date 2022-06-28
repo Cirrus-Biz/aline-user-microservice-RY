@@ -7,49 +7,49 @@ pipeline {
     }
     agent any
     stages {
-        stage('Maven Test') {
-            steps {
-                sh 'mvn test -Dmaven.test.failure.ignore=true'
-            }
-        }
-        stage('Maven Verify') {
-            steps {
-                sh 'mvn verify -Dmaven.test.failure.ignore=true'
-            }
-        }
-        stage('SonarQube analysis') {
-            steps {
-                withSonarQubeEnv(installationName: 'sonarqube') {
-                    sh 'mvn sonar:sonar'
-                }
-            } 
-        }
-        stage("Quality gate") {
-            steps {
-                waitForQualityGate abortPipeline: true
-            }
-        }
-        stage('Package') { 
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-            }
-        }
-        stage('Build') {
-            steps {
-                script {
-                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-                }
-            }
-        }
-        stage('Publish Image') {
-            steps {
-                script {
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
+        // stage('Maven Test') {
+        //     steps {
+        //         sh 'mvn test -Dmaven.test.failure.ignore=true'
+        //     }
+        // }
+        // stage('Maven Verify') {
+        //     steps {
+        //         sh 'mvn verify -Dmaven.test.failure.ignore=true'
+        //     }
+        // }
+        // stage('SonarQube analysis') {
+        //     steps {
+        //         withSonarQubeEnv(installationName: 'sonarqube') {
+        //             sh 'mvn sonar:sonar'
+        //         }
+        //     } 
+        // }
+        // stage("Quality gate") {
+        //     steps {
+        //         waitForQualityGate abortPipeline: true
+        //     }
+        // }
+        // stage('Package') { 
+        //     steps {
+        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+        //     }
+        // }
+        // stage('Build') {
+        //     steps {
+        //         script {
+        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+        //         }
+        //     }
+        // }
+        // stage('Publish Image') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+        //                 dockerImage.push()
+        //             }
+        //         }
+        //     }
+        // }
         stage('Wget Docker Compose'){
             steps {
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/3f595ee60bb83627f2795c2f5953b11f2ff4c08f/docker-compose.yml'
