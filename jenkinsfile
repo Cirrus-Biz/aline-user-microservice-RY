@@ -52,8 +52,8 @@ pipeline {
         // }
         stage('Wget Docker Compose'){
             steps {
-                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/3f595ee60bb83627f2795c2f5953b11f2ff4c08f/docker-compose.yml'
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/3f595ee60bb83627f2795c2f5953b11f2ff4c08f/docker-compose.yml'
+                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
             }
         }
         stage('Docker Hard Clean') {
