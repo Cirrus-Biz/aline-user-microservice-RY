@@ -73,8 +73,7 @@ pipeline {
         stage('Docker Compose Up') {
             steps {
                 sh 'aws configure set region us-east-1 --profile default'
-                sh 'aws ecr get-login-password --region east-1'
-                sh 'docker login --username AWS --password-stdin 744758641322.dkr.ecr.east-1.amazonaws.com'
+                sh 'aws ecr get-login-password --region east-1 | docker login --username AWS --password-stdin 744758641322.dkr.ecr.east-1.amazonaws.com'
                 sh 'docker compose up'
             }
         }
