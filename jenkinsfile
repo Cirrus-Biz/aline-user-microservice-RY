@@ -72,7 +72,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh 'echo $USER_M'
+                sh 'aws ecr get-login-password --region east-1 | docker login --username AWS --password-stdin 744758641322.dkr.ecr.east-1.amazonaws.com'
                 sh 'docker compose up'
             }
         }
@@ -81,7 +81,6 @@ pipeline {
                 sh 'sudo docker system prune -all -f'
                 sh 'sudo docker logout'
                 sh 'sudo rm -rf ~/.aws/'
-                sh 'sudo rm -rf ~/.sonar/*'
                 sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
                 sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git'
                 sh 'docker context use default'
