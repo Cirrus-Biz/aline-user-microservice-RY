@@ -52,7 +52,6 @@ pipeline {
         // }
         stage('Wget Docker Compose'){
             steps {
-                sh 'rm docker-compose.yml'
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
             }
