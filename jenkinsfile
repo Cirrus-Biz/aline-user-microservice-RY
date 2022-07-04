@@ -63,7 +63,6 @@ pipeline {
             steps {
                 sh 'docker context use default'
                 sh 'sudo docker system prune -a --volumes -f'
-                sh 'docker context rm ry-ecs'
             }
         }
         stage('ECS Context Creation') {
@@ -83,6 +82,7 @@ pipeline {
         }
         stage('Cleaning') {
             steps {
+                sh 'docker context rm ry-ecs'
                 sh 'sudo docker system prune -all -f'
                 sh 'sudo docker logout'
                 sh 'sudo rm -rf ~/.aws/'
