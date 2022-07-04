@@ -4,6 +4,8 @@ pipeline {
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
+        DOCKER_USERNAME = 'AWS'
+        AWS_PROFILE = "ry-ecs"
     }
     agent any
     stages {
@@ -52,6 +54,7 @@ pipeline {
         // }
         stage('Wget Docker Compose'){
             steps {
+                sh 'rm docker-compose.yml'
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
             }
@@ -59,7 +62,15 @@ pipeline {
         stage('Docker Hard Clean') {
             steps {
                 sh 'docker context use default'
-                sh 'docker context use ry-ecs'
+                sh 'sudo docker system prune -a --volumes -f'
+                sh 'docker context rm ry-ecs'
+            }
+        }
+        stage('ECS Context Creation') {
+            steps {
+                sh 'echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin'
+                sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
+                sh 'docker context use ${AWS_PROFILE}'
             }
         }
         stage('Docker Compose Up') {
