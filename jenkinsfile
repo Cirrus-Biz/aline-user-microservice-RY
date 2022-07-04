@@ -70,7 +70,8 @@ pipeline {
                 sh 'aws configure set aws_access_key_id AKIA22ZYTAKVPP7MX3FH --profile ${AWS_PROFILE}'
                 sh 'aws configure set aws_secret_access_key_id G1rI7eNbEOvf0YmiDtTXBTGzGB/XqWW1ynFVi+f1 --profile ${AWS_PROFILE}'
                 sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
-                sh 'docker login --username AWS -p  744758641322.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'awsPassword=$(aws ecr get-login-password --region us-east-1)'
+                sh 'docker login --username AWS -p $awsPassword  744758641322.dkr.ecr.us-east-1.amazonaws.com'
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
                 sh 'docker context use ${AWS_PROFILE}'
             }
