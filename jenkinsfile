@@ -60,20 +60,14 @@ pipeline {
         stage('Docker Hard Clean') {
             steps {
                 sh 'docker context use default'
-                sh 'sudo docker system prune -a --volumes -f'
-                sh 'docker context rm ry-ecs'
-            }
-        }
-        stage('ECS Context Creation') {
-            steps {
-                sh 'docker context create ecs ry-ecs --from-env'
                 sh 'docker context use ry-ecs'
             }
         }
         stage('Docker Compose Up') {
             steps {
                 sh 'aws configure set region us-east-1 --profile default'
-                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 744758641322.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'awsPassword=$(aws ecr get-login-password --region us-east-1)'
+                sh 'docker login --username AWS -p  744758641322.dkr.ecr.us-east-1.amazonaws.com'
                 sh 'docker compose up'
             }
         }
