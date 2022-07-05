@@ -7,7 +7,7 @@ pipeline {
         DOCKER_USERNAME = 'AWS'
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
-        ecs_s_Key = credentials('ry-sec')
+        ecs_s_Key = credentials('ry-secret-access-key')
     }
     agent any
     stages {
