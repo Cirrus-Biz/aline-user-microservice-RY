@@ -80,7 +80,7 @@ pipeline {
                 sh 'sudo docker compose up'
             }
         }
-        stage('Cleaning') {
+        post('Cleaning') {
             steps {
                 sh 'docker context rm ${AWS_PROFILE}'
                 sh 'sudo docker system prune -all -f'
