@@ -80,6 +80,13 @@ pipeline {
                 sh 'sudo docker compose up'
             }
         }
+        // stage ('Clean Up') {
+        //     steps {
+        //         sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
+        //     }
+        // }
+    }
+
     post {
         always {
             sh 'docker context rm ${AWS_PROFILE}'
@@ -90,11 +97,5 @@ pipeline {
             sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git'
             sh 'docker context use default'
         }
-        }
-        // stage ('Clean Up') {
-        //     steps {
-        //         sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
-        //     }
-        // }
     }
 }
