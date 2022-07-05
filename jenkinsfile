@@ -6,6 +6,8 @@ pipeline {
         dockerImage = ''
         DOCKER_USERNAME = 'AWS'
         AWS_PROFILE = "ry-ecs"
+        ecs_a_key = credentials('ry-access-key')
+        ecs_s_Key = credentials('ry-sec')
     }
     agent any
     stages {
@@ -67,11 +69,8 @@ pipeline {
         }
         stage('ECS Context Creation') {
             steps {
-                sh 'aws configure set aws_access_key_id  --profile ${AWS_PROFILE}'
-                sh 'aws configure set aws_secret_access_key_id  --profile ${AWS_PROFILE}'
-                sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
-                sh 'awsPassword=$(aws ecr get-login-password --region us-east-1)'
-                sh 'docker login --username AWS -p $awsPassword  744758641322.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'aws configure set aws_access_key_id $awsAccessKey--profile ${AWS_PROFILE}'
+                sh 'aws configure set aws_secret_access_key_id $awsSecretKey --profile ${AWS_PROFILE}'
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
                 sh 'docker context use ${AWS_PROFILE}'
             }
@@ -83,7 +82,7 @@ pipeline {
         }
         stage('Cleaning') {
             steps {
-                sh 'docker context rm ry-ecs'
+                sh 'docker context rm ${AWS_PROFILE}'
                 sh 'sudo docker system prune -all -f'
                 sh 'sudo docker logout'
                 sh 'sudo rm -rf ~/.aws/'
