@@ -74,6 +74,7 @@ pipeline {
                 sh 'aws configure set aws_secret_access_key_id ${ecs_s_key} --profile ${AWS_PROFILE}'
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
                 sh 'docker context use ${AWS_PROFILE}'
+                sh 'docker context ls'
             }
         }
         stage('Docker Compose Up') {
