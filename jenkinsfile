@@ -75,6 +75,7 @@ pipeline {
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
                 sh 'docker context use ${AWS_PROFILE}'
                 sh 'docker context ls'
+                sh 'echo $RY_USER_M'
             }
         }
         stage('Docker Compose Up') {
