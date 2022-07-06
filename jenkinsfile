@@ -8,6 +8,7 @@ pipeline {
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
         ecs_s_key = credentials('ry-secret-access-key')
+        RY_USER_M = ${RY_USER_M}
     }
     agent any
     stages {
