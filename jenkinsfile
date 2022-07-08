@@ -82,7 +82,7 @@ pipeline {
         stage('Docker Compose Up') {
             steps {
                 sh 'aws secretsmanager get-secret-value \
-                    --secret-id RY-aline-environment-variables:RY_DB_NAME'
+                    --secret-id RY-aline-environment-variables:RY_DB_PORT'
                 sh 'echo ${RY_DB_PORT}'
                 sh 'docker compose up'
             }
