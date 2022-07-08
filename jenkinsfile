@@ -81,7 +81,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh 'source ${compose_env}'
+                sh 'cat ${compose_env}'
                 sh 'echo ${RY_DB_PORT}'
                 sh 'docker compose up'
             }
