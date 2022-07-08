@@ -8,7 +8,7 @@ pipeline {
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
         ecs_s_key = credentials('ry-secret-access-key')
-        RY_USER_M = "$env.RY_USER_M"
+        compose_env = credentials('compose-env')
     }
     agent any
     stages {
@@ -81,6 +81,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
+                sh 'bash ${compose_env}'
                 sh 'docker compose up'
             }
         }
