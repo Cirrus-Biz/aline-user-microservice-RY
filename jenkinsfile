@@ -4,6 +4,7 @@ pipeline {
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
+        env_vars = ''
         DOCKER_USERNAME = 'AWS'
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
