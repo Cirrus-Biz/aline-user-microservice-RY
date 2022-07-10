@@ -4,7 +4,6 @@ pipeline {
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
-        env_vars = ''
         DOCKER_USERNAME = 'AWS'
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
@@ -83,11 +82,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                script {
-                    env_vars = aws secretsmanager get-secret-value \
-                    --secret-id RY-aline-environment-variables --query SecretString --output text | jq -r 'to_entries|map("(.key)=(.value)")|.[]'
-                }
-                sh 'echo ${env_vars}'
+                sh '${secret_command}'
                 sh 'docker compose up'
             }
         }
