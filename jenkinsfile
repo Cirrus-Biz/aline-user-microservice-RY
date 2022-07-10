@@ -83,11 +83,11 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh '''export env_vars=aws secretsmanager get-secret-value \\\\
-                    --secret-id RY-aline-environment-variables --query SecretString --output text | jq -r \\\'to_entries|map("\\\\(.key)=\\\\(.value)")|.[]\\\'
-                    for row in $(echo "${env_vars}"; do
-                        echo ${row}
-                    done'''
+                script {
+                    env_vars = aws secretsmanager get-secret-value \
+                    --secret-id RY-aline-environment-variables --query SecretString --output text | jq -r 'to_entries|map("(.key)=(.value)")|.[]'
+                }
+                sh 'echo ${env_vars}'
                 sh 'docker compose up'
             }
         }
