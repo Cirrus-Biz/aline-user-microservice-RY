@@ -85,8 +85,10 @@ pipeline {
                     echo "test is '${test}'" // prints: FOO is 'initial FOO env value'
 
                     env.BAR = "bar"
+                    env.test = "pass"
                 }
                 echo "env.BAR is '${BAR}'" // prints: env.BAR is 'bar'
+                echo "env.test is '${test}'"
                 sh 'docker compose up'
             }
         }
