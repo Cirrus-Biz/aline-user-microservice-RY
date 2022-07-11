@@ -81,7 +81,9 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh 'export test="it passed"'
+                script {
+                    test = "it passed"
+                }
                 sh 'echo $test'
                 sh 'docker compose up'
             }
