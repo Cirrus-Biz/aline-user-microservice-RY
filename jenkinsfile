@@ -88,7 +88,7 @@ pipeline {
                     env.test = "pass"
                 }
                 echo "env.BAR is '${BAR}'" // prints: env.BAR is 'bar'
-                echo "${test}"
+                echo "env.test is '${test}'"
                 sh 'docker compose up'
             }
         }
