@@ -8,8 +8,7 @@ pipeline {
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
         ecs_s_key = credentials('ry-secret-access-key')
-        secret_command = '''aws secretsmanager get-secret-value \\
-                    --secret-id RY-aline-environment-variables --query SecretString --output text | jq \'to_entries|map("\\(.key)=\\(.value)")\''''
+        test = ''
     }
     agent any
     stages {
