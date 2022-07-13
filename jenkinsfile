@@ -8,7 +8,8 @@ pipeline {
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry-access-key')
         ecs_s_key = credentials('ry-secret-access-key')
-        test = 'intial'
+        secret_command = '''aws secretsmanager get-secret-value \\
+                    --secret-id RY-aline-environment-variables --query SecretString --output text | jq \'to_entries|map("\\(.key)=\\(.value)")\''''
     }
     agent any
     stages {
@@ -81,14 +82,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                script {
-                    echo "test is '${test}'" // prints: FOO is 'initial FOO env value'
-
-                    env.BAR = "bar"
-                    env.test = "pass"
-                }
-                echo "env.BAR is '${BAR}'" // prints: env.BAR is 'bar'
-                echo "env.test is '${test}'"
+                sh 'aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r \'.["SecretString"]\' | jq \'.\' | jq -r \'keys[] as \\$k | "export \\\\(\\$k)=\\\\(.[\\$k])"\' > .env'
                 sh 'docker compose up'
             }
         }
