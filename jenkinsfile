@@ -82,7 +82,7 @@ pipeline {
         }
         stage('Docker Compose Up') {
             steps {
-                sh 'aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r \'.["SecretString"]\' | jq \'.\' | jq -r \'keys[] as \\$k | "export \\\\(\\$k)=\\\\(.[\\$k])"\' > .env'
+                sh '''aws secretsmanager get-secret-value --secret-id aline-kwi/${Environment}/secrets/resources --region ${REGION} --profile ${PROFILE} | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
                 sh '. .env'
                 sh 'echo ${RY_DB_NAME}'
                 sh 'docker compose up'
