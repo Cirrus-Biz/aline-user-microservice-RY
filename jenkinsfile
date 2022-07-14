@@ -58,6 +58,8 @@ pipeline {
         // }
         stage('Wget Docker Compose'){
             steps {
+                sh 'mkdir docker_compose'
+                sh 'cd docker_compose'
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
                 sh 'rm docker-compose.yml'
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
@@ -77,7 +79,6 @@ pipeline {
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
                 sh 'docker context use ${AWS_PROFILE}'
                 sh 'docker context ls'
-                sh 'env'
             }
         }
         stage('Docker Compose Up') {
@@ -87,6 +88,7 @@ pipeline {
                 sh '. ./.env'
                 sh 'echo ${RY_DB_NAME}'
                 sh 'docker compose up'
+                sh 'cd -'
             }
         }
         // stage ('Clean Up') {
@@ -102,6 +104,8 @@ pipeline {
             sh 'docker context rm ${AWS_PROFILE}'
             sh 'sudo docker system prune --all -f'
             sh 'sudo docker logout'
+            sh 'rmdir docker_compose'
+            sh 'sudo rm ./.env'
             sh 'sudo rm -rf ~/.aws/'
             sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
             sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git'
