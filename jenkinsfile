@@ -87,7 +87,7 @@ pipeline {
                 sh 'cat ./.env'
                 sh '. ./.env'
                 sh 'echo ${RY_DB_NAME}'
-                sh 'docker compose up'
+                sh 'docker compose up -p RY-aline-finacial'
                 sh 'cd -'
             }
         }
