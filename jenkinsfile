@@ -72,8 +72,6 @@ pipeline {
         }
         stage('ECS Context Creation') {
             steps {
-                sh 'echo "Access Key: ${ecs_a_key}"'
-                sh 'echo "Access Key: ${ecs_s_key}"'
                 sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${AWS_PROFILE}'
                 sh 'aws configure set aws_secret_access_key_id ${ecs_s_key} --profile ${AWS_PROFILE}'
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
@@ -81,16 +79,16 @@ pipeline {
                 sh 'docker context ls'
             }
         }
-        // stage('Docker Compose Up') {
-        //     steps {
-        //         sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
-        //         sh 'cat ./.env'
-        //         sh '. ./.env'
-        //         sh 'echo ${RY_DB_NAME}'
-        //         sh 'docker compose -p "RY-aline-finacial" up -d'
-        //         sh 'cd -'
-        //     }
-        // }
+        stage('Docker Compose Up') {
+            steps {
+                sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
+                sh 'cat ./.env'
+                sh '. ./.env'
+                sh 'echo ${RY_DB_NAME}'
+                sh 'docker compose -p "RY-aline-finacial" up -d'
+                sh 'cd -'
+            }
+        }
         // stage ('Clean Up') {
         //     steps {
         //         sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
