@@ -5,6 +5,7 @@ pipeline {
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
+        dockerImage2 = ''
         DOCKER_USERNAME = 'AWS'
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry_access_key')
@@ -43,7 +44,7 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
+                    dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
                 }
             }
         }
@@ -52,6 +53,9 @@ pipeline {
                 script {
                     docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
                         dockerImage.push()
+                    }
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+                        dockerImage2.push()
                     }
                 }
             }
