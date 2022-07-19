@@ -88,8 +88,6 @@ pipeline {
                 sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
                 sh '. ./.env'
                 sh 'docker compose -p "RY-aline-finacial" up -d'
-                sh "docker rmi ${ecr_url}${registryEndpoint}:${GIT_COMMIT}"
-                sh "docker rmi ${ecr_url}${registryEndpoint}:latest"
             }
         }
     }
@@ -97,6 +95,8 @@ pipeline {
     post {
         always {
             sh 'docker context use default'
+            sh "docker rmi ${ecr_url}${registryEndpoint}:${GIT_COMMIT}"
+            sh "docker rmi ${ecr_url}${registryEndpoint}:latest"
             sh 'docker context rm ${AWS_PROFILE}'
             sh 'sudo docker system prune --all -f'
             sh 'sudo docker logout'
