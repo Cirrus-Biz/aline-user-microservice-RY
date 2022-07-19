@@ -1,5 +1,6 @@
 pipeline {
     environment {
+        ecr_url = credentials('ry_ecr_url')
         registryEndpoint = 'aline-user-ry'
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
@@ -8,8 +9,6 @@ pipeline {
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry_access_key')
         ecs_s_key = credentials('ry_secret_access_key')
-        secret_command = '''aws secretsmanager get-secret-value \\
-                    --secret-id RY-aline-environment-variables --query SecretString --output text | jq \'to_entries|map("\\(.key)=\\(.value)")\''''
     }
     agent any
     stages {
@@ -75,20 +74,16 @@ pipeline {
             steps {
                 sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${AWS_PROFILE}'
                 sh 'aws configure set aws_secret_access_key_id ${ecs_s_key} --profile ${AWS_PROFILE}'
-                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 744758641322.dkr.ecr.us-east-1.amazonaws.com/aline-user-ry'
+                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$env.AWS_ECR_REGISTRY" + "/" + $registryEndpoint + ":latest"'
                 sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
                 sh 'docker context use ${AWS_PROFILE}'
-                sh 'docker context ls'
             }
         }
         stage('Docker Compose Up') {
             steps {
                 sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
-                sh 'cat ./.env'
                 sh '. ./.env'
-                sh 'echo ${RY_DB_NAME}'
                 sh 'docker compose -p "RY-aline-finacial" up -d'
-                sh 'cd -'
             }
         }
     }
