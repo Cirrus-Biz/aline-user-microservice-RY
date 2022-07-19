@@ -96,8 +96,8 @@ pipeline {
         always {
             sh 'docker context use default'
             sh 'docker context rm ${AWS_PROFILE}'
-            sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:${GIT_COMMIT}"
-            sh "docker rmi $env.AWS_ECR_REGISTRY/$registryEndpoint:latest"
+            sh "docker rmi ${ecr_url}${registryEndpoint}:${GIT_COMMIT}"
+            sh "docker rmi ${ecr_url}${registryEndpoint}:latest"
             sh 'sudo docker system prune --all -f'
             sh 'sudo docker logout'
             sh 'sudo rm ./.env'
