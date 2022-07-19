@@ -95,8 +95,8 @@ pipeline {
     post {
         always {
             sh 'docker context use default'
-            sh "docker rmi ${ecr_url}${registryEndpoint}:${GIT_COMMIT}"
-            sh "docker rmi ${ecr_url}${registryEndpoint}:latest"
+            sh "docker rmi $dockerImage"
+            sh "docker rmi $dockerImage2"
             sh 'docker context rm ${AWS_PROFILE}'
             sh 'sudo docker system prune --all -f'
             sh 'sudo docker logout'
