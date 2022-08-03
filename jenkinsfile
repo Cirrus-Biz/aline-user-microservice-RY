@@ -60,36 +60,6 @@ pipeline {
                 }
             }
         }
-        stage('Wget Docker Compose'){
-            steps {
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
-                sh 'rm docker-compose.yml'
-                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
-            }
-        }
-        stage('Docker Hard Clean') {
-            steps {
-                sh 'docker context use default'
-                sh 'sudo docker system prune -a --volumes -f'
-            }
-        }
-        stage('ECS Context Creation') {
-            steps {
-                sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${AWS_PROFILE}'
-                sh 'aws configure set aws_secret_access_key_id ${ecs_s_key} --profile ${AWS_PROFILE}'
-                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ecr_url}${registryEndpoint}'
-                sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
-                sh 'docker context use ${AWS_PROFILE}'
-            }
-        }
-        stage('Docker Compose Up') {
-            steps {
-                sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
-                sh '. ./.env'
-                sh 'docker compose -p "RY-aline-finacial" up -d'
-            }
-        }
     }
 
     post {
