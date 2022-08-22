@@ -76,6 +76,19 @@ pipeline {
                 sh 'docker context use ${AWS_PROFILE}'
             }
         }
+        stage('Wget Docker Compose'){
+            steps {
+                // Docker Compose
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+                sh 'rm docker-compose.yml'
+                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+                // Status Check Script
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+                sh 'rm status-check.sh'
+                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+            }
         stage('Ecs Status Check') {
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
