@@ -89,6 +89,7 @@ pipeline {
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
             }
+        }
         stage('Ecs Status Check') {
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
