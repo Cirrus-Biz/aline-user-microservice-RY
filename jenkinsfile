@@ -11,7 +11,7 @@ pipeline {
         ecs_a_key = credentials('ry_access_key')
         ecs_s_key = credentials('ry_secret_access_key')
         STACK = "ry-aline-finacial"
-        status-check = credentials('status-check-ry')
+        status_check = credentials('status-check-ry')
     }
     agent any
     stages {
@@ -89,7 +89,7 @@ pipeline {
         stage('Ecs Status Check') {
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
-                    sh '. ${status-check}'
+                    sh '. ${status_check}'
                 }
             }
         }
