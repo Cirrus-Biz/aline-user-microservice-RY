@@ -37,31 +37,31 @@ pipeline {
         //         waitForQualityGate abortPipeline: true
         //     }
         // }
-        stage('Package') { 
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-            }
-        }
-        stage('Build') {
-            steps {
-                script {
-                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-                    dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
-                }
-            }
-        }
-        stage('Publish Image') {
-            steps {
-                script {
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-                        dockerImage.push()
-                    }
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-                        dockerImage2.push()
-                    }
-                }
-            }
-        }
+        // stage('Package') { 
+        //     steps {
+        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+        //     }
+        // }
+        // stage('Build') {
+        //     steps {
+        //         script {
+        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+        //             dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
+        //         }
+        //     }
+        // }
+        // stage('Publish Image') {
+        //     steps {
+        //         script {
+        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+        //                 dockerImage.push()
+        //             }
+        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+        //                 dockerImage2.push()
+        //             }
+        //         }
+        //     }
+        // }
         stage('Docker Hard Clean') {
             steps {
                 sh 'docker context use default'
