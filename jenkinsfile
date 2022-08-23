@@ -10,7 +10,7 @@ pipeline {
         AWS_PROFILE = "ry-ecs"
         ecs_a_key = credentials('ry_access_key')
         ecs_s_key = credentials('ry_secret_access_key')
-        STACK = "'ry-aline-finacial'"
+        STACK = "ry-aline-finacial"
         status_check = credentials('status-check-ry')
     }
     agent any
