@@ -88,8 +88,10 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
-                sh '. ${status_check}'
-                sh '$?'
+                sh 'aws cloudformation describe-stacks --stack-name=${STACK} > stack.txt 2>&1'
+                timeout(time: 30, unit: 'MINUTES') {
+                    sh '. ${status_check}'
+                }
             }
         }
         stage('Docker Compose Up') {
