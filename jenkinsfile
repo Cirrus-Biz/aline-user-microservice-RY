@@ -11,7 +11,7 @@ pipeline {
         ecs_a_key = credentials('ry_access_key')
         ecs_s_key = credentials('ry_secret_access_key')
         STACK = "ry-aline-finacial"
-        status_check = credentials('status-check-ry')
+        status-check = credentials(status-check)
     }
     agent any
     stages {
@@ -37,31 +37,31 @@ pipeline {
         //         waitForQualityGate abortPipeline: true
         //     }
         // }
-        // stage('Package') { 
-        //     steps {
-        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-        //     }
-        // }
-        // stage('Build') {
-        //     steps {
-        //         script {
-        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-        //             dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
-        //         }
-        //     }
-        // }
-        // stage('Publish Image') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-        //                 dockerImage.push()
-        //             }
-        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-        //                 dockerImage2.push()
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Package') { 
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+            }
+        }
+        stage('Build') {
+            steps {
+                script {
+                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+                    dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
+                }
+            }
+        }
+        stage('Publish Image') {
+            steps {
+                script {
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+                        dockerImage.push()
+                    }
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
+                        dockerImage2.push()
+                    }
+                }
+            }
+        }
         stage('Docker Hard Clean') {
             steps {
                 sh 'docker context use default'
@@ -79,16 +79,22 @@ pipeline {
         }
         stage('Wget Docker Compose'){
             steps {
+                // Docker Compose
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
                 sh 'rm docker-compose.yml'
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+                // Status Check Script
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+                sh 'rm status-check.sh'
+                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
             }
         }
         stage('Ecs Status Check') {
             steps {
                 timeout(time: 30, unit: 'MINUTES') {
-                    sh '. ${status_check}'
+                    sh '. ./status-check.sh'
                 }
             }
         }
