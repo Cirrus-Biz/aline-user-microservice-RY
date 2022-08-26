@@ -92,7 +92,7 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
-                sh returnStdout: true, script: 'ls'
+                sh '. ./status-check.sh'
             }
         }
         // stage('Docker Compose Up') {
