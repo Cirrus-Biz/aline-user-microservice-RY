@@ -92,6 +92,7 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
+                sh 'ls'
                 timeout(time: 30, unit: 'MINUTES') {
                     sh(returnStdout: true, script: 'ls')
                 }
