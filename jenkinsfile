@@ -93,7 +93,7 @@ pipeline {
         stage('Ecs Status Check') {
             steps {
                 sh 'ls'
-                sh(returnStdout: true, script: 'ls')
+                sh(returnStdout: true, script: 'sh ls')
             }
         }
         // stage('Docker Compose Up') {
