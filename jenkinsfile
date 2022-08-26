@@ -92,10 +92,7 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
-                sh 'ls'
-                timeout(time: 30, unit: 'MINUTES') {
-                    sh(returnStdout: true, script: 'ls')
-                }
+                sh '. ./status-check.sh'
             }
         }
         // stage('Docker Compose Up') {
@@ -109,6 +106,8 @@ pipeline {
     
     post {
         always {
+            sh 'rm status-check.sh*'
+            sh 'rm docker-compose.yml*'
             sh 'docker context use default'
             sh 'docker context rm ${AWS_PROFILE}'
             sh 'sudo docker system prune --all -f'
