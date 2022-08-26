@@ -79,7 +79,6 @@ pipeline {
         }
         stage('Wget Docker Compose'){
             steps {
-                // Docker Compose
                 sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
                 sh 'rm docker-compose.yml'
                 sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
@@ -88,7 +87,6 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
-                sh 'aws cloudformation describe-stacks --stack-name=${STACK} > stack.txt 2>&1'
                 timeout(time: 30, unit: 'MINUTES') {
                     sh '. ${status_check}'
                 }
