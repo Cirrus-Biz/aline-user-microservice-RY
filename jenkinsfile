@@ -92,13 +92,13 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
-                sh '. ./status-check.sh'
+                sh returnStdout: true, script: '. ./status-check.sh'
             }
         }
         // stage('Docker Compose Up') {
         //     steps {
-        //         sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
-        //         sh '. ./.env'
+                sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | jq -r '.["SecretString"]' | jq '.' | jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
+                sh '. ./.env'
         //         sh 'docker compose -p ${STACK} up -d'
         //     }
         // }
