@@ -11,7 +11,6 @@ pipeline {
         ecs_a_key = credentials('ry_access_key')
         ecs_s_key = credentials('ry_secret_access_key')
         STACK = "ry-aline-finacial"
-        status-check = credentials(status-check)
     }
     agent any
     stages {
