@@ -92,6 +92,7 @@ pipeline {
         }
         stage('Ecs Status Check') {
             steps {
+                sh 'ls'
                 sh(returnStdout: true, script: 'ls')
             }
         }
