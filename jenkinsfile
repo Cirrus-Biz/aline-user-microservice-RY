@@ -61,18 +61,6 @@ pipeline {
                 }
             }
         }
-        // stage('Publish Image') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-        //                 dockerImage.push()
-        //             }
-        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
-        //                 dockerImage2.push()
-        //             }
-        //         }
-        //     }
-        // }
         stage('Docker Hard Clean') {
             steps {
                 sh 'docker context use default'
@@ -124,13 +112,14 @@ pipeline {
     post {
         always {
             sh 'rm status-check.sh*'
+            sh 'rm stack.txt'
             sh 'rm docker-compose.yml*'
             sh 'docker context use default'
             sh 'docker context rm ${AWS_PROFILE}'
             sh 'sudo docker system prune --all -f'
             sh 'sudo docker logout'
             sh 'sudo rm ./.env'
-            sh 'sudo rm -rf ~/.aws/'
+            // sh 'sudo rm -rf ~/.aws/'
             sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
             sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
         }
