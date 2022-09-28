@@ -107,7 +107,7 @@ pipeline {
     //             sh 'docker compose -p ${STACK} up -d'
     //         }
     //     }
-    // }
+    }
     
     post {
         always {
