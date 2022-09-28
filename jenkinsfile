@@ -54,10 +54,10 @@ pipeline {
         stage('Publish Image') {
             steps {
                 script {
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:$THE_BUTLER_SAYS_SO") {
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
                         dockerImage.push()
                     }
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:$THE_BUTLER_SAYS_SO") {
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:$env.AWS_REGION:ry-aws-credentials") {
                         dockerImage2.push()
                     }
                 }
