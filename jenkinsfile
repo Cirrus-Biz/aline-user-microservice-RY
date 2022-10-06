@@ -8,9 +8,9 @@ pipeline {
         dockerImage = ''
         dockerImage2 = ''
         DOCKER_USERNAME = 'AWS'
-        AWS_PROFILE = "ry-ecs"
-        ecs_a_key = credentials('ry_access_key')
-        ecs_s_key = credentials('ry_secret_access_key')
+        AWS_PROFILE = "ry-aws"
+        aws_a_key = credentials('ry_access_key')
+        aws_s_key = credentials('ry_secret_access_key')
         STACK = "ry-aline-finacial"
     }
     agent {
@@ -138,8 +138,8 @@ pipeline {
                 environment(name: "deployment", value: "EKS")
             }
             steps {
-                sh 'aws configure set aws_access_key_id ${eks_a_key} --profile ${AWS_PROFILE}'
-                sh 'aws configure set aws_secret_access_key ${eks_s_key} --profile ${AWS_PROFILE}'
+                sh 'aws configure set aws_access_key_id ${aws_a_key} --profile ${AWS_PROFILE}'
+                sh 'aws configure set aws_secret_access_key ${aws_s_key} --profile ${AWS_PROFILE}'
                 sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
                 sh 'set AWS_PROFILE=${AWS_PROFILE}'
             }
@@ -179,6 +179,10 @@ pipeline {
     post {
         always {
             sh 'sudo rm -r aline-eks-ry'
+            script{
+                if (env.deployment == 'EKS')
+                    echo "it worked"
+            }
             sh 'rm status-check.sh*'
             sh 'rm stack.txt'
             sh 'rm docker-compose.yml*'
