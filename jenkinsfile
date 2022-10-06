@@ -17,13 +17,6 @@ pipeline {
         label 'Team-Jenkins-Worker-JAVA'
     }
     stages {
-        stage('testing') {
-            steps {
-                sh 'git clone https://github.com/Cirrus-Biz/aline-eks-ry.git'
-                sh 'cd aline-eks-ry && git checkout dev && ls'
-                sh 'cd aline-eks-ry && ls'
-            }
-        }
         // stage('Maven Test') {
         //     steps {
         //         sh 'mvn test -Dmaven.test.failure.ignore=true'
@@ -46,29 +39,29 @@ pipeline {
         //         waitForQualityGate abortPipeline: true
         //     }
         // }
-        // stage('Package') { 
-        //     steps {
-        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-        //     }
-        // }
-        // stage('Build') {
-        //     steps {
-        //         script {
-        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-        //             dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
-        //         }
-        //     }
-        // }
-        // stage('Publish to ECR') {
-        //     steps{
-        //         script {
-        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:us-east-1:ry-aws-credentials") {
-        //                 dockerImage.push()
-        //                 dockerImage2.push()
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Package') { 
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+            }
+        }
+        stage('Build') {
+            steps {
+                script {
+                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+                    dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
+                }
+            }
+        }
+        stage('Publish to ECR') {
+            steps{
+                script {
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:us-east-1:ry-aws-credentials") {
+                        dockerImage.push()
+                        dockerImage2.push()
+                    }
+                }
+            }
+        }
         // stage('Docker Hard Clean') {
         //     when {
         //         environment(name: "deployment", value: "ECS")
@@ -130,62 +123,73 @@ pipeline {
         //         sh 'docker compose -p ${STACK} up -d'
         //     }
         // }
-        // stage('EKS Context Creation') {
-        //     when {
-        //         environment(name: "deployment", value: "EKS")
-        //     }
-        //     steps {
-        //         sh 'aws configure set aws_access_key_id ${eks_a_key} --profile ${AWS_PROFILE}'
-        //         sh 'aws configure set aws_secret_access_key ${eks_s_key} --profile ${AWS_PROFILE}'
-        //         sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
-        //         sh 'set AWS_PROFILE=${AWS_PROFILE}'
-        //     }
-        // }
-        // stage('EKS Configuration') {
-        //     when {
-        //         environment(name: "deployment", value: "EKS")
-        //     }
-        //     steps {
-        //         sh '. ./cluster-check.sh'
-        //     }
-        // }
-        // stage('Helm Loadbalancer Setup') {
-        //     when {
-        //         environment(name: "deployment", value: "EKS")
-        //     }
-        //     steps {
-        //         sh 'helm repo add eks https://aws.github.io/eks-charts'
-        //         sh '. ./helm-lb-upgrade.sh'
-        //     }
-        // }
-        // stage('Kubectl Apply') {
-        //     when {
-        //         environment(name: "deployment", value: "EKS")
-        //     }
-        //     steps {
-        //         sh 'kubectl apply -f ${eks_secrets}'
-        //         sh 'kubectl apply -f ./deployments'
-        //         sh 'kubectl apply -f ./deployments/ingress'
-        //         sh '. ./eks-path-changes.sh'
-        //         sh 'kubectl get ingress'
-        //     }
-        // }
+        stage('Git Clone EKS Repo') {
+            when {
+                environment(name: "deployment", value: "EKS")
+            }
+            steps {
+                sh 'git clone https://github.com/Cirrus-Biz/aline-eks-ry.git'
+                sh 'cd aline-eks-ry && git checkout dev && ls'
+                sh 'cd aline-eks-ry && ls'
+            }
+        }
+        stage('EKS Context Creation') {
+            when {
+                environment(name: "deployment", value: "EKS")
+            }
+            steps {
+                sh 'aws configure set aws_access_key_id ${eks_a_key} --profile ${AWS_PROFILE}'
+                sh 'aws configure set aws_secret_access_key ${eks_s_key} --profile ${AWS_PROFILE}'
+                sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
+                sh 'set AWS_PROFILE=${AWS_PROFILE}'
+            }
+        }
+        stage('EKS Configuration') {
+            when {
+                environment(name: "deployment", value: "EKS")
+            }
+            steps {
+                sh '. aline-eks-ry/cluster-check.sh'
+            }
+        }
+        stage('Helm Loadbalancer Setup') {
+            when {
+                environment(name: "deployment", value: "EKS")
+            }
+            steps {
+                sh 'helm repo add eks https://aws.github.io/eks-charts'
+                sh '. aline-eks-ry/helm-lb-upgrade.sh'
+            }
+        }
+        stage('Kubectl Apply') {
+            when {
+                environment(name: "deployment", value: "EKS")
+            }
+            steps {
+                sh 'kubectl apply -f ${eks_secrets}'
+                sh 'kubectl apply -f aline-eks-ry/deployments'
+                sh 'kubectl apply -f aline-eks-ry/deployments/ingress'
+                sh '. aline-eks-ry/eks-path-changes.sh'
+                sh 'kubectl get ingress'
+                sh 'kubectl set image deployment/user user=user:latest'
+            }
+        }
     }
     
     post {
         always {
             sh 'sudo rm -r aline-eks-ry'
-            // sh 'rm status-check.sh*'
-            // sh 'rm stack.txt'
-            // sh 'rm docker-compose.yml*'
-            // sh 'docker context use default'
-            // sh 'docker context rm ${AWS_PROFILE}'
-            // sh 'sudo docker system prune --all -f'
-            // sh 'sudo docker logout'
-            // sh 'sudo rm ./.env'
-            // // sh 'sudo rm -rf ~/.aws/'
-            // sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
-            // sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
+            sh 'rm status-check.sh*'
+            sh 'rm stack.txt'
+            sh 'rm docker-compose.yml*'
+            sh 'docker context use default'
+            sh 'docker context rm ${AWS_PROFILE}'
+            sh 'sudo docker system prune --all -f'
+            sh 'sudo docker logout'
+            sh 'sudo rm ./.env'
+            sh 'sudo rm -rf ~/.aws/'
+            sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
+            sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
         }
     }
 }
