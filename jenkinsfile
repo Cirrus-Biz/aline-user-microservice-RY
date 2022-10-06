@@ -17,6 +17,9 @@ pipeline {
         label 'Team-Jenkins-Worker-JAVA'
     }
     stages {
+        stage('testing') {
+            sh 'ls'
+        }
         // stage('Maven Test') {
         //     steps {
         //         sh 'mvn test -Dmaven.test.failure.ignore=true'
@@ -39,106 +42,146 @@ pipeline {
         //         waitForQualityGate abortPipeline: true
         //     }
         // }
-        stage('Package') { 
-            steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-            }
-        }
-        stage('Build') {
-            steps {
-                script {
-                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-                    dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
-                }
-            }
-        }
-        stage('Publish to ECR') {
-            steps{
-                script {
-                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:us-east-1:ry-aws-credentials") {
-                        dockerImage.push()
-                        dockerImage2.push()
-                    }
-                }
-            }
-        }
-        stage('Docker Hard Clean') {
-            when {
-                environment(name: "deployment", value: "ECS")
-            }
-            steps {
-                sh 'docker context use default'
-                sh 'sudo docker system prune -a --volumes -f'
-            }
-        }
-        stage('ECS Context Creation') {
-            when {
-                environment(name: "deployment", value: "ECS")
-            }
-            steps {
-                sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${AWS_PROFILE}'
-                sh 'aws configure set aws_secret_access_key_id ${ecs_s_key} --profile ${AWS_PROFILE}'
-                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ecr_url}${registryEndpoint}'
-                sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
-                sh 'docker context use ${AWS_PROFILE}'
-            }
-        }
-        stage('Wget Docker Compose'){
-            when {
-                environment(name: "deployment", value: "ECS")
-            }
-            steps {
-                // Docker Compose
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
-                sh 'rm docker-compose.yml'
-                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
-                // Status Check Script
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
-                sh 'rm status-check.sh'
-                sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
-                sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
-            }
-        }
-        stage('Ecs Status Check') {
-            when {
-                environment(name: "deployment", value: "ECS")
-            }
-            steps {
-                timeout(time: 30, unit: 'MINUTES') {
-                    sh '. ./status-check.sh'
-                }
-            }
-        }
-        stage('Docker Compose Up') {
-            when {
-                environment(name: "deployment", value: "ECS")
-            }
-            steps {
-                sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | 
-                    jq -r '.["SecretString"]' | 
-                    jq '.' | 
-                    jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
-                sh '. ./.env'
-                sh 'docker compose -p ${STACK} up -d'
-            }
-        }
+        // stage('Package') { 
+        //     steps {
+        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+        //     }
+        // }
+        // stage('Build') {
+        //     steps {
+        //         script {
+        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+        //             dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
+        //         }
+        //     }
+        // }
+        // stage('Publish to ECR') {
+        //     steps{
+        //         script {
+        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:us-east-1:ry-aws-credentials") {
+        //                 dockerImage.push()
+        //                 dockerImage2.push()
+        //             }
+        //         }
+        //     }
+        // }
+        // stage('Docker Hard Clean') {
+        //     when {
+        //         environment(name: "deployment", value: "ECS")
+        //     }
+        //     steps {
+        //         sh 'docker context use default'
+        //         sh 'sudo docker system prune -a --volumes -f'
+        //     }
+        // }
+        // stage('ECS Context Creation') {
+        //     when {
+        //         environment(name: "deployment", value: "ECS")
+        //     }
+        //     steps {
+        //         sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${AWS_PROFILE}'
+        //         sh 'aws configure set aws_secret_access_key_id ${ecs_s_key} --profile ${AWS_PROFILE}'
+        //         sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ecr_url}${registryEndpoint}'
+        //         sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
+        //         sh 'docker context use ${AWS_PROFILE}'
+        //     }
+        // }
+        // stage('Wget Docker Compose'){
+        //     when {
+        //         environment(name: "deployment", value: "ECS")
+        //     }
+        //     steps {
+        //         // Docker Compose
+        //         sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+        //         sh 'rm docker-compose.yml'
+        //         sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+        //         sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/docker-compose.yml'
+        //         // Status Check Script
+        //         sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+        //         sh 'rm status-check.sh'
+        //         sh 'curl https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+        //         sh 'wget https://raw.githubusercontent.com/Cirrus-Biz/docker-ry/Feature-CB-88-Docker-Compose-Via-Jenkins/status-check.sh'
+        //     }
+        // }
+        // stage('Ecs Status Check') {
+        //     when {
+        //         environment(name: "deployment", value: "ECS")
+        //     }
+        //     steps {
+        //         timeout(time: 30, unit: 'MINUTES') {
+        //             sh '. ./status-check.sh'
+        //         }
+        //     }
+        // }
+        // stage('Docker Compose Up') {
+        //     when {
+        //         environment(name: "deployment", value: "ECS")
+        //     }
+        //     steps {
+        //         sh '''aws secretsmanager get-secret-value --secret-id RY-aline-environment-variables | 
+        //             jq -r '.["SecretString"]' | 
+        //             jq '.' | 
+        //             jq -r 'keys[] as \$k | "export \\(\$k)=\\(.[\$k])"' > .env'''
+        //         sh '. ./.env'
+        //         sh 'docker compose -p ${STACK} up -d'
+        //     }
+        // }
+        // stage('EKS Context Creation') {
+        //     when {
+        //         environment(name: "deployment", value: "EKS")
+        //     }
+        //     steps {
+        //         sh 'aws configure set aws_access_key_id ${eks_a_key} --profile ${AWS_PROFILE}'
+        //         sh 'aws configure set aws_secret_access_key ${eks_s_key} --profile ${AWS_PROFILE}'
+        //         sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
+        //         sh 'set AWS_PROFILE=${AWS_PROFILE}'
+        //     }
+        // }
+        // stage('EKS Configuration') {
+        //     when {
+        //         environment(name: "deployment", value: "EKS")
+        //     }
+        //     steps {
+        //         sh '. ./cluster-check.sh'
+        //     }
+        // }
+        // stage('Helm Loadbalancer Setup') {
+        //     when {
+        //         environment(name: "deployment", value: "EKS")
+        //     }
+        //     steps {
+        //         sh 'helm repo add eks https://aws.github.io/eks-charts'
+        //         sh '. ./helm-lb-upgrade.sh'
+        //     }
+        // }
+        // stage('Kubectl Apply') {
+        //     when {
+        //         environment(name: "deployment", value: "EKS")
+        //     }
+        //     steps {
+        //         sh 'kubectl apply -f ${eks_secrets}'
+        //         sh 'kubectl apply -f ./deployments'
+        //         sh 'kubectl apply -f ./deployments/ingress'
+        //         sh '. ./eks-path-changes.sh'
+        //         sh 'kubectl get ingress'
+        //     }
+        // }
     }
     
-    post {
-        always {
-            sh 'rm status-check.sh*'
-            sh 'rm stack.txt'
-            sh 'rm docker-compose.yml*'
-            sh 'docker context use default'
-            sh 'docker context rm ${AWS_PROFILE}'
-            sh 'sudo docker system prune --all -f'
-            sh 'sudo docker logout'
-            sh 'sudo rm ./.env'
-            // sh 'sudo rm -rf ~/.aws/'
-            sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
-            sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
-        }
-    }
+    // post {
+    //     always {
+    //         sh 'rm status-check.sh*'
+    //         sh 'rm stack.txt'
+    //         sh 'rm docker-compose.yml*'
+    //         sh 'docker context use default'
+    //         sh 'docker context rm ${AWS_PROFILE}'
+    //         sh 'sudo docker system prune --all -f'
+    //         sh 'sudo docker logout'
+    //         sh 'sudo rm ./.env'
+    //         // sh 'sudo rm -rf ~/.aws/'
+    //         sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
+    //         sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
+    //     }
+    // }
 }
 
