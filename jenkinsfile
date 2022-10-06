@@ -180,8 +180,7 @@ pipeline {
         always {
             sh 'sudo rm -r aline-eks-ry'
             script{
-                if (env.deployment == 'EKS')
-                    sh 'echo "it worked"'
+                sh 'echo "it worked"'
             }
             sh 'rm status-check.sh*'
             sh 'rm stack.txt'
