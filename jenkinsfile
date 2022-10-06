@@ -18,7 +18,9 @@ pipeline {
     }
     stages {
         stage('testing') {
-            sh 'ls'
+            steps {
+                sh 'ls'  
+            }
         }
         // stage('Maven Test') {
         //     steps {
