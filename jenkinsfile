@@ -20,7 +20,7 @@ pipeline {
         stage('testing') {
             steps {
                 sh 'git clone https://github.com/Cirrus-Biz/aline-eks-ry.git'
-                sh 'cd aline-eks-ry | ls'
+                sh 'cd aline-eks-ry && ls'
             }
         }
         // stage('Maven Test') {
@@ -171,20 +171,21 @@ pipeline {
         // }
     }
     
-    // post {
-    //     always {
-    //         sh 'rm status-check.sh*'
-    //         sh 'rm stack.txt'
-    //         sh 'rm docker-compose.yml*'
-    //         sh 'docker context use default'
-    //         sh 'docker context rm ${AWS_PROFILE}'
-    //         sh 'sudo docker system prune --all -f'
-    //         sh 'sudo docker logout'
-    //         sh 'sudo rm ./.env'
-    //         // sh 'sudo rm -rf ~/.aws/'
-    //         sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
-    //         sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
-    //     }
-    // }
+    post {
+        always {
+            sh 'sudo rmdir -rf aline-eks-ry'
+            // sh 'rm status-check.sh*'
+            // sh 'rm stack.txt'
+            // sh 'rm docker-compose.yml*'
+            // sh 'docker context use default'
+            // sh 'docker context rm ${AWS_PROFILE}'
+            // sh 'sudo docker system prune --all -f'
+            // sh 'sudo docker logout'
+            // sh 'sudo rm ./.env'
+            // // sh 'sudo rm -rf ~/.aws/'
+            // sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/*'
+            // sh 'sudo rm -rf ~/jenkins/workspace/${JOB_NAME}/.git*'
+        }
+    }
 }
 
