@@ -173,7 +173,7 @@ pipeline {
     
     post {
         always {
-            sh 'sudo rmdir -rf aline-eks-ry'
+            sh 'sudo rm -d aline-eks-ry'
             // sh 'rm status-check.sh*'
             // sh 'rm stack.txt'
             // sh 'rm docker-compose.yml*'
