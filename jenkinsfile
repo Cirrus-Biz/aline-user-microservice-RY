@@ -20,7 +20,7 @@ pipeline {
         stage('testing') {
             steps {
                 sh 'git clone https://github.com/Cirrus-Biz/aline-eks-ry.git'
-                sh 'cd aline-eks-ry && ls'
+                sh 'cd aline-eks-ry && git checkout dev && ls'
             }
         }
         // stage('Maven Test') {
