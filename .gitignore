@@ -49,3 +49,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+
+*.env
+*.log
+*.sh
