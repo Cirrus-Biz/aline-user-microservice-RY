@@ -1,8 +1,9 @@
 pipeline {
     environment {
+        registryEndpoint = 'aline-user-ry'
         deployment = 'EKS'
         ecr_url = credentials('ry_ecr_url')
-        registryEndpoint = 'aline-user-ry'
+        
         registryCredential = 'ry-aws-credentials'
         THE_BUTLER_SAYS_SO = credentials('ry-aws-credentials')
         dockerImage = ''
