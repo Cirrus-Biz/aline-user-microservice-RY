@@ -8,7 +8,8 @@ pipeline {
         dockerImage = ''
         dockerImage2 = ''
         DOCKER_USERNAME = 'AWS'
-        AWS_PROFILE = "ry-aws"
+        ECS_PROFILE = "ry-ecs"
+        EKS_PROFILE = "ry-eks"
         aws_a_key = credentials('ry_access_key')
         aws_s_key = credentials('ry_secret_access_key')
         eks_secrets = credentials('ry_eks_secrets')
@@ -77,11 +78,11 @@ pipeline {
                 environment(name: "deployment", value: "ECS")
             }
             steps {
-                sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${AWS_PROFILE}'
-                sh 'aws configure set aws_secret_access_key ${ecs_s_key} --profile ${AWS_PROFILE}'
+                sh 'aws configure set aws_access_key_id ${ecs_a_key} --profile ${ECS_PROFILE}'
+                sh 'aws configure set aws_secret_access_key ${ecs_s_key} --profile ${ECS_PROFILE}'
                 sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ecr_url}${registryEndpoint}'
-                sh 'docker context create ecs ${AWS_PROFILE} --profile ${AWS_PROFILE}'
-                sh 'docker context use ${AWS_PROFILE}'
+                sh 'docker context create ecs ${ECS_PROFILE} --profile ${ECS_PROFILE}'
+                sh 'docker context use ${ECS_PROFILE}'
             }
         }
         stage('Wget Docker Compose'){
@@ -139,11 +140,11 @@ pipeline {
                 environment(name: "deployment", value: "EKS")
             }
             steps {
-                sh 'aws configure set aws_access_key_id ${aws_a_key} --profile ${AWS_PROFILE}'
-                sh 'aws configure set aws_secret_access_key ${aws_s_key} --profile ${AWS_PROFILE}'
+                sh 'aws configure set aws_access_key_id ${aws_a_key} --profile ${EKS_PROFILE}'
+                sh 'aws configure set aws_secret_access_key ${aws_s_key} --profile ${EKS_PROFILE}'
                 sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ecr_url}${registryEndpoint}'
-                sh 'aws configure set region us-east-1 --profile ${AWS_PROFILE}'
-                sh 'set AWS_PROFILE=${AWS_PROFILE}'
+                sh 'aws configure set region us-east-1 --profile ${EKS_PROFILE}'
+                sh 'set AWS_PROFILE=${EKS_PROFILE}'
             }
         }
         stage('EKS Configuration') {
