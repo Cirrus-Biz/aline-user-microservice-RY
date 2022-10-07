@@ -42,29 +42,29 @@ pipeline {
         //         waitForQualityGate abortPipeline: true
         //     }
         // }
-        // stage('Package') { 
-        //     steps {
-        //         sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
-        //     }
-        // }
-        // stage('Build') {
-        //     steps {
-        //         script {
-        //             dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
-        //             dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
-        //         }
-        //     }
-        // }
-        // stage('Publish to ECR') {
-        //     steps{
-        //         script {
-        //             docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:us-east-1:ry-aws-credentials") {
-        //                 dockerImage.push()
-        //                 dockerImage2.push()
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Package') { 
+            steps {
+                sh 'mvn -Dmaven.test.failure.ignore=true clean package' 
+            }
+        }
+        stage('Build') {
+            steps {
+                script {
+                    dockerImage = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":${GIT_COMMIT}"
+                    dockerImage2 = docker.build "$env.AWS_ECR_REGISTRY" + "/" + registryEndpoint + ":latest"
+                }
+            }
+        }
+        stage('Publish to ECR') {
+            steps{
+                script {
+                    docker.withRegistry("https://$env.AWS_ECR_REGISTRY", "ecr:us-east-1:ry-aws-credentials") {
+                        dockerImage.push()
+                        dockerImage2.push()
+                    }
+                }
+            }
+        }
         stage('Docker Hard Clean') {
             when {
                 environment(name: "deployment", value: "ECS")
