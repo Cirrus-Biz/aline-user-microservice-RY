@@ -181,11 +181,11 @@ pipeline {
     post {
         always {
             script {
-                if (${deployment} == 'EKS')
+                if (env.deployment == 'EKS')
                     sh 'sudo rm -r aline-eks-ry'
             }
             script {
-                if (${deployment} == 'ECS')
+                if (env.deployment == 'ECS')
                     sh 'rm status-check.sh*'
                     sh 'rm stack.txt'
                     sh 'rm docker-compose.yml*'
