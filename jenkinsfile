@@ -175,7 +175,7 @@ pipeline {
                 sh 'kubectl apply -f aline-eks-ry/deployments/ingress'
                 sh '. aline-eks-ry/eks-path-changes.sh'
                 sh 'kubectl get ingress'
-                // sh 'kubectl set image deployment/user user=${ecr_url}${registryEndpoint}:${GIT_COMMIT}'
+                sh 'kubectl set image deployment/user user=${ecr_url}${registryEndpoint}:${GIT_COMMIT}'
             }
         }
     }
