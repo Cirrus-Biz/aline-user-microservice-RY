@@ -186,14 +186,14 @@ pipeline {
             }
             script {
                 if (env.deployment == 'ECS')
-                    sh 'rm status-check.sh*'
-                    sh 'rm stack.txt'
-                    sh 'rm docker-compose.yml*'
-                    sh 'docker context use default'
-                    sh 'docker context rm ${AWS_PROFILE}'
-                    sh 'sudo docker system prune --all -f'
-                    sh 'sudo docker logout'
-                    sh 'sudo rm ./.env'
+                    sh '''rm status-check.sh* \\
+                    rm stack.txt \\
+                    rm docker-compose.yml* \\
+                    docker context use default \\
+                    docker context rm ${AWS_PROFILE} \\
+                    sudo docker system prune --all -f \\
+                    sudo docker logout \\
+                    sudo rm ./.env '''
             }
             
             sh 'sudo rm -rf ~/.aws/'
