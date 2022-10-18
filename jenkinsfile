@@ -12,8 +12,8 @@ pipeline {
         DOCKER_USERNAME = 'AWS'
         ECS_PROFILE = "ry-ecs"
         EKS_PROFILE = "ry-eks"
-        aws_a_key = credentials('ry_access_key')
-        aws_s_key = credentials('ry_secret_access_key')
+        aws_a_key = credentials('ry-access-key2')
+        aws_s_key = credentials('ry-secret-access-key2')
         eks_secrets = credentials('ry_eks_secrets')
         STACK = "ry-aline-finacial"
     }
