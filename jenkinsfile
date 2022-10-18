@@ -2,7 +2,7 @@ pipeline {
     environment {
         registryEndpoint = 'aline-user-ry'
         MS = 'user'
-        deployment = 'EKS'
+        deployment = 'ECS'
 
         ecr_url = credentials('ry_ecr_url')
         registryCredential = 'ry-aws-credentials'
